@@ -61,6 +61,10 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                     directWay = "按鍵左下方";
                 }else if (getDirect(x,y,targetX,targetRightX,targetY,targetBottomY) == BOTTOM_RIGHT){
                     directWay = "按鍵右下方";
+                }else if (getDirect(x,y,targetX,targetRightX,targetY,targetBottomY) == CENTER_TOP){
+                    directWay = "按鍵正上方";
+                }else if (getDirect(x,y,targetX,targetRightX,targetY,targetBottomY) == CENTER_BOTTOM){
+                    directWay = "按鍵正下方";
                 }
 
                 tvContent.setText("x : "+x+"\ny : "+y+"\n方位 : "+directWay+"\n角度約 : "+calculateAngle(x,y,targetX,targetRightX,targetY,targetBottomY));
