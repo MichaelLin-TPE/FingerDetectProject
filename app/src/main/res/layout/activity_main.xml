@@ -7,11 +7,33 @@
     android:id="@+id/root"
     tools:context=".MainActivity">
 
+    <HorizontalScrollView
+        android:id="@+id/scroll_view"
+        app:layout_constraintBottom_toTopOf="@id/top"
+        android:background="@drawable/custom_button_shpae"
+        android:layout_marginHorizontal="80dp"
+        android:paddingVertical="5dp"
+        android:layout_marginBottom="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/content"
+            tools:text="上中下左右上中下左右上中下左右上中下左右"
+            android:textColor="@color/black"
+            android:textSize="25sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+
+    </HorizontalScrollView>
+
+
+
     <TextView
         android:id="@+id/tv_button"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:text="Button"
         android:textSize="25sp"
         android:gravity="center"
         android:background="@drawable/custom_button_shpae"
@@ -20,38 +42,70 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/content"
-        android:textSize="16sp"
-        android:textColor="@color/black"
-        android:layout_marginTop="15dp"
-        app:layout_constraintTop_toBottomOf="@id/tv_button"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:gravity="center|start"
-        android:paddingStart="50dp"
-        android:layout_marginHorizontal="20dp"
-        android:text="x:23\ny:23\n方位:上"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"/>
 
     <View
+        android:id="@+id/center_line2"
         app:layout_constraintTop_toTopOf="@id/tv_button"
         app:layout_constraintBottom_toBottomOf="@id/tv_button"
         android:background="@color/black"
         android:layout_width="match_parent"
+        android:layout_marginHorizontal="80dp"
         android:layout_height="1dp"/>
 
 
     <View
+        android:id="@+id/center_line"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginVertical="250dp"
         android:background="@color/black"
         android:layout_width="1dp"
         android:layout_height="match_parent"/>
 
+    <TextView
+        android:id="@+id/top"
+        android:textSize="20sp"
+        android:textColor="@color/black"
+        android:text="上"
+        app:layout_constraintBottom_toTopOf="@id/center_line"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/bottom"
+        android:textSize="20sp"
+        android:textColor="@color/black"
+        android:text="下"
+        app:layout_constraintTop_toBottomOf="@id/center_line"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:id="@+id/left"
+        android:textSize="20sp"
+        android:textColor="@color/black"
+        android:text="左"
+        app:layout_constraintTop_toTopOf="@id/center_line2"
+        app:layout_constraintBottom_toBottomOf="@id/center_line2"
+        app:layout_constraintRight_toLeftOf="@id/center_line2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/right"
+        android:textSize="20sp"
+        android:textColor="@color/black"
+        android:text="右"
+        app:layout_constraintTop_toTopOf="@id/center_line2"
+        app:layout_constraintBottom_toBottomOf="@id/center_line2"
+        app:layout_constraintLeft_toRightOf="@id/center_line2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
 
 

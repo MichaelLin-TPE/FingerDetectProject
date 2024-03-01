@@ -7,9 +7,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.HorizontalScrollView;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity implements View.OnTouchListener{
+import java.util.HashSet;
+import java.util.Set;
+
+public class MainActivity extends AppCompatActivity implements View.OnTouchListener {
 
     private static final int TOP_RIGHT = 0;
     private static final int TOP_LEFT = 1;
@@ -18,10 +22,12 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     private static final int CENTER = 4;
     private static final int CENTER_TOP = 5;
     private static final int CENTER_BOTTOM = 6;
-    private TextView tvButton,tvContent;
+    private TextView tvButton, tvContent;
     private ConstraintLayout root;
+    private String directWay = "";
+    private String lastDirectWay  = "";
 
-
+    private HorizontalScrollView horizontalScrollView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         tvButton = findViewById(R.id.tv_button);
         tvContent = findViewById(R.id.content);
         root = findViewById(R.id.root);
-
+        horizontalScrollView = findViewById(R.id.scroll_view);
         root.setOnTouchListener(this);
 
     }
@@ -38,62 +44,88 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        switch (event.getAction()){
-            case MotionEvent.ACTION_MOVE:
-                float x = event.getX();
-                float y = event.getY();
-                float targetX = tvButton.getX();
-                float targetY = tvButton.getY();
-                float targetRightX = tvButton.getX() + tvButton.getWidth();
-                float targetBottomY = tvButton .getY() + tvButton.getHeight();
 
-                Log.i("Michael","targetY : "+targetY + " targetBottomY : "+targetBottomY);
-                String directWay = "";
-                if (x < targetX || x > targetRightX){
+        float x = event.getX();
+        float y = event.getY();
+        float targetX = tvButton.getX();
+        float targetY = tvButton.getY();
+        float targetRightX = tvButton.getX() + tvButton.getWidth();
+        float targetBottomY = tvButton.getY() + tvButton.getHeight();
+
+        Log.i("Michael", "targetY : " + targetY + " targetBottomY : " + targetBottomY);
+
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                if (x < targetX || x > targetRightX) {
                     directWay = "位置已超出按鍵";
-                }else if (y < targetY || y > targetBottomY){
+                    return true;
+                } else if (y < targetY || y > targetBottomY) {
                     directWay = "位置已超出按鍵";
-                }else if (getDirect(x,y,targetX,targetRightX,targetY,targetBottomY) == TOP_LEFT){
-                    directWay = "按鍵左上方";
-                }else if (getDirect(x,y,targetX,targetRightX,targetY,targetBottomY) == TOP_RIGHT){
-                    directWay = "按鍵右上方";
-                }else if (getDirect(x,y,targetX,targetRightX,targetY,targetBottomY) == BOTTOM_LEFT){
-                    directWay = "按鍵左下方";
-                }else if (getDirect(x,y,targetX,targetRightX,targetY,targetBottomY) == BOTTOM_RIGHT){
-                    directWay = "按鍵右下方";
-                }else if (getDirect(x,y,targetX,targetRightX,targetY,targetBottomY) == CENTER_TOP){
-                    directWay = "按鍵正上方";
-                }else if (getDirect(x,y,targetX,targetRightX,targetY,targetBottomY) == CENTER_BOTTOM){
-                    directWay = "按鍵正下方";
+                    return true;
+                } else if (getDirect(x, y, targetX, targetRightX, targetY, targetBottomY) == CENTER_TOP) {
+                    directWay = "正上方,";
+                } else if (getDirect(x, y, targetX, targetRightX, targetY, targetBottomY) == CENTER_BOTTOM) {
+                    directWay = "正下方,";
+                } else if (getDirect(x, y, targetX, targetRightX, targetY, targetBottomY) == CENTER) {
+                    directWay = "中間,";
+                }
+                break;
+            case MotionEvent.ACTION_MOVE:
+                if (x < targetX || x > targetRightX) {
+                    directWay = "位置已超出按鍵";
+                    return true;
+                } else if (y < targetY || y > targetBottomY) {
+                    directWay = "位置已超出按鍵";
+                    return true;
+                } else if (getDirect(x, y, targetX, targetRightX, targetY, targetBottomY) == TOP_LEFT) {
+                    directWay = "左上方,";
+                } else if (getDirect(x, y, targetX, targetRightX, targetY, targetBottomY) == TOP_RIGHT) {
+                    directWay = "右上方,";
+                } else if (getDirect(x, y, targetX, targetRightX, targetY, targetBottomY) == BOTTOM_LEFT) {
+                    directWay = "左下方,";
+                } else if (getDirect(x, y, targetX, targetRightX, targetY, targetBottomY) == BOTTOM_RIGHT) {
+                    directWay = "右下方,";
                 }
 
-                tvContent.setText("x : "+x+"\ny : "+y+"\n方位 : "+directWay+"\n角度約 : "+calculateAngle(x,y,targetX,targetRightX,targetY,targetBottomY));
+//                tvContent.setText(directWay+"\n角度約 : "+calculateAngle(x,y,targetX,targetRightX,targetY,targetBottomY));
                 break;
         }
-
+        if (!directWay.equals(lastDirectWay)) {
+            tvContent.setText(tvContent.getText().toString() + directWay);
+            tvContent.post(new Runnable() {
+                @Override
+                public void run() {
+                    horizontalScrollView.smoothScrollTo(tvContent.getWidth(), 0);
+                }
+            });
+            lastDirectWay = directWay; // 更新記錄的方向
+        }
 
         return true;
     }
 
     private int getDirect(float x, float y, float targetX, float targetRightX, float targetY, float targetBottomY) {
         float targetCenterX = targetX + (targetRightX - targetX) / 2;
-        float targetCenterY = targetY + (targetBottomY - targetY )/ 2;
-        if (x == targetCenterX && y < targetCenterY){
+        float targetCenterY = targetY + (targetBottomY - targetY) / 2;
+        if ((x >= targetCenterX - 50 && x < targetCenterX + 50) && (y >= targetCenterY - 50 && y < targetCenterY + 50)) {
+            return CENTER;
+        } else if ((x >= targetCenterX - 50 && x < targetCenterX + 50) && y < targetCenterY) {
             return CENTER_TOP;
-        }else if (x == targetCenterX && y > targetCenterY){
+        } else if ((x >= targetCenterX - 50 && x < targetCenterX + 50) && y > targetCenterY) {
             return CENTER_BOTTOM;
-        }else if (x < targetCenterX && y < targetCenterY){
+        } else if (x < targetCenterX && y < targetCenterY) {
             return TOP_LEFT;
-        }else if (x > targetCenterX && y < targetCenterY){
+        } else if (x > targetCenterX && y < targetCenterY) {
             return TOP_RIGHT;
-        }else if (x < targetCenterX && y > targetCenterY){
+        } else if (x < targetCenterX && y > targetCenterY) {
             return BOTTOM_LEFT;
-        }else if (x > targetCenterX && y > targetCenterY){
+        } else if (x > targetCenterX && y > targetCenterY) {
             return BOTTOM_RIGHT;
         }
 
-        return  -1;
+        return -1;
     }
+
     private double calculateAngle(float x, float y, float targetX, float targetRightX, float targetY, float targetBottomY) {
         float targetCenterX = targetX + (targetRightX - targetX) / 2;
         float targetCenterY = targetY + (targetBottomY - targetY) / 2;
